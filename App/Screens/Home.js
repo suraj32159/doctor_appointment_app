@@ -3,8 +3,8 @@ import React from 'react'
 
 export default function Home() {
   return (
-    <NavigationContainer>
-      <TabNavigations />
-    </NavigationContainer>
+    <View>
+      <Text>Home</Text>
+    </View>
   )
 }

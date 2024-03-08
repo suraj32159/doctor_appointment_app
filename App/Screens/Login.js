@@ -27,7 +27,8 @@ export default function App() {
           </TouchableOpacity>
         </View>
       </View>
-      </NavigationContainer>
+      <TabNavigation/>
+    </NavigationContainer>
   );
 }
 
