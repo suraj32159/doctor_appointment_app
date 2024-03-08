@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "doctor-appointment-app",
+    "scheme": "doctor-appointment-app",
     "slug": "doctor-appointment-app",
     "version": "1.0.0",
     "orientation": "portrait",
