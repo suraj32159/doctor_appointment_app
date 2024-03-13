@@ -1,11 +1,27 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import NavigationRoute from "./App/Screens/NavigationRoute" 
 import Login from "./App/Screens/Login" 
+import { useFonts } from "expo-font";
+
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'appfont': require('./assets/fonts/Outfit-Regular.ttf'),
+    'appfont-bold': require('./assets/fonts/Outfit-Bold.ttf'),
+    'appfont-semi': require('./assets/fonts/Outfit-SemiBold.ttf'),
+    'appfont-light': require('./assets/fonts/Outfit-Light.ttf')
+  });
+
+  if (!fontsLoaded) {
+    console.log("Fonts not loaded!");
+    // You can also return a placeholder view or display an error message here
+  }
+
   return (
-    <Login></Login>
+    <NavigationRoute />
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

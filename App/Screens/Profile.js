@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function Profile() {
   return (
-    <View>
+    <View style={{padding:20, marginTop:20}}>
       <Text>Profile</Text>
     </View>
   )

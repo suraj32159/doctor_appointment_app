@@ -1,14 +1,15 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import app from '../../assets/images/app.jpg';
+import app from '../../assets/images/app/app.jpg';
 import Colors from '../../assets/Shared/Color';
 import { NavigationContainer } from '@react-navigation/native';
-import TabNavigation from '../Navigations/TabNavigation';
+import { useNavigation } from '@react-navigation/native';
 
-export default function App() {
+
+export default function Login() {
+  const navigation=useNavigation();
   return (
-    <NavigationContainer>
       <View style={styles.container}>
         <Image source={app} style={styles.appImage} />
         <View style={{ backgroundColor: '#fff', padding: 25, alignItems: 'center' }}>
@@ -16,7 +17,7 @@ export default function App() {
           <Text style={styles.heading}>Appointment Booking App</Text>
           <Text style={{ textAlign: 'center', marginTop: 20 }}>Book Appointment Effortlessly and manage your health journey</Text>
           <TouchableOpacity 
-          onPress={()=>console.log("Clicked")}
+          onPress={() => navigation.replace('Home')}
           style={{padding:16,
           backgroundColor:Colors.lightGreen, 
           borderRadius:90, 
@@ -27,8 +28,6 @@ export default function App() {
           </TouchableOpacity>
         </View>
       </View>
-      <TabNavigation/>
-    </NavigationContainer>
   );
 }
 
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    marginTop: 0
+    marginTop: 0,
   },
   appImage: {
     paddingTop: 35,
