@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function SubHeading() {
+export default function BookAppointment() {
   return (
     <View>
-      <Text style={{fontWeight:'bold'}}>About Us</Text>
+      <Text>BookAppointment</Text>
     </View>
   )
 }

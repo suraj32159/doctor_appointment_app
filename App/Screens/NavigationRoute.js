@@ -12,7 +12,7 @@ import Homenavigation from '../Navigations/Homenavigation';
 export default function NavigationRoute() {
   return (
     <NavigationContainer>
-      <Homenavigation/>
+      <TabNavigation/>
     </NavigationContainer>
   );
 }
