@@ -4,8 +4,10 @@ import PageHeader from '../Components/Shared/PageHeader';
 import { useRoute } from '@react-navigation/native'
 import HospitalInfo from '../Components/HospitalDetail/HospitalInfo';
 import Colors from '../../assets/Shared/Color';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HospitalDetails() {
+    const navigation=useNavigation();
     const [hospital, setHospital] = useState(null);
     const param = useRoute().params;
 
@@ -43,6 +45,9 @@ export default function HospitalDetails() {
             </View>
 
             <TouchableOpacity
+                onPress={() => navigation.navigate('book-appointment', {
+                    hospital:hospital})
+                }
                 style={{
                     position: 'absolute',
                     bottom: 0,

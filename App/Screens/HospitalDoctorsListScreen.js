@@ -55,34 +55,6 @@ export default function HospitalDoctorsListScreen() {
 const doctorList = [
   {
       id: 1,
-      name: "Dr. Krunal Pandya",
-      description : 'Dentist',
-      imageUrl: require('../../assets/images/doctor/doctor.jpg'),
-      category:{'name':'Dentist'}
-  },
-  {
-      id: 2,
-      name: 'Dr. Rohit Sharma',
-      description: 'Eye Specialist',
-      imageUrl: require('../../assets/images/doctor/doctor1.jpg'),
-      category:{'name':'Veda'}
-  },
-  {
-      id: 3,
-      name: 'Dr. Angali Mehta',
-      description: 'General Practitioner',
-      imageUrl: require('../../assets/images/doctor/doctor2.jpg'),
-      category:{'name':'Dentist'}
-  },
-  {
-      id: 4,
-      name: 'Dr. Ayush Panday',
-      description: 'Orthopedic Surgeon',
-      imageUrl: require('../../assets/images/doctor/doctor3.jpg'),
-      category:{'name':'Dentist'}
-  },
-  {
-      id: 5,
       name: 'Dr. Megha Rajput',
       description: 'Obstetrician/Gynecologist ',
       imageUrl: require('../../assets/images/doctor/doctor4.jpg'),
