@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import app from '../../assets/images/app/app.jpg';
 import Colors from '../../assets/Shared/Color';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,6 +12,9 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import SignInScreen from './SignInScreen';
+
 
 
 export default function Login() {
@@ -24,7 +27,11 @@ export default function Login() {
   const getLocalUser = async () => {
     try {
       setLoading(true);
-      const userJSON = await AsyncStorage.getItem("@user");
+      const userJSON = await AsyncStorage.getItem('@user', (error, result) => {
+        if(error) console.error('Something went wrong!');
+        else if(result) console.log('Getting key was successfull', result);
+        else if(result === null) console.log('Key does not exists!');
+      });
       const userData = userJSON ? JSON.parse(userJSON) : null;
       console.log("userData", userData)
       setUserInfo(userData);
@@ -56,28 +63,14 @@ export default function Login() {
     });
     return () => unsub();
   }, []);
-
-  const navigation=useNavigation();
-  return (
-      <View style={styles.container}>
-        <Image source={app} style={styles.appImage} />
-        <View style={{ backgroundColor: '#fff', padding: 25, alignItems: 'center' }}>
-          <Text style={styles.heading}>Your Ultimate Doctor</Text>
-          <Text style={styles.heading}>Appointment Booking App</Text>
-          <Text style={{ textAlign: 'center', marginTop: 20 }}>Book Appointment Effortlessly and manage your health journey</Text>
-          <TouchableOpacity 
-          onPress={() => promptAsync()}
-          style={{padding:16,
-          backgroundColor:Colors.lightGreen, 
-          borderRadius:90, 
-          alignItems:'center', 
-          marginTop:150, 
-          width:Dimensions.get('screen').width*0.8}}>
-            <Text style={{fontSize:17, color:Colors.white}}>Sign In with Google</Text>
-          </TouchableOpacity>
-        </View>
+  
+  if (loading)
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size={"large"} />
       </View>
-  );
+    );
+  return userInfo ? <Navigation /> : <SignInScreen promptAsync={promptAsync} />;
 }
 
 const styles = StyleSheet.create({
