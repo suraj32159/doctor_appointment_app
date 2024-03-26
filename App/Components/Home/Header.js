@@ -1,11 +1,9 @@
 import { View, Text, Image } from 'react-native'
 import React from 'react'
-import { useUser } from '@clerk/clerk-expo'
 import patient from '../../../assets/images/app/patient.jpg';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Header() {
-    const {isLoaded, isSignIn, user} = useUser
   return (
     <View style={{display: 'flex', flexDirection:'row', gap:7, alignItems:'center', justifyContent:'space-between'}}>
         <View style={{display: 'flex', flexDirection:'row', gap:7, alignItems:'center'}}>

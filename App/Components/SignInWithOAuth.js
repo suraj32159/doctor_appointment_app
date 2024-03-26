@@ -17,7 +17,6 @@ const SignInWithOAuth = () => {
     try {
       const { createdSessionId, signIn, signUp, setActive } =
         await startOAuthFlow();
-      console.log(createdSessionId)
       if (createdSessionId) {
         setActive({ session: createdSessionId });
       } else {

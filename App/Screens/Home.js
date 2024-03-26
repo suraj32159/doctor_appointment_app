@@ -6,7 +6,6 @@ import Slider from '../Components/Home/Slider'
 import Categories from '../Components/Home/Categories'
 import PremiumHospitals from '../Components/Home/PremiumHospitals'
 import { ScrollView } from 'react-native-virtualized-view'
-import Login from './Login'
 // import { NavigationContainer } from '@react-navigation/native';
 // import TabNavigation from '../Navigations/TabNavigation';
 

@@ -4,14 +4,17 @@ import Colors from '../../../assets/Shared/Color';
 import SubHeading from '../Home/SubHeading';
 import moment from 'moment';
 import { FlatList } from 'react-native-gesture-handler';
+import Api from '../../Services/Api';
 
-export default function BookingSection() {
+
+export default function BookingSection({hospital}) {
   const [next7Days, setNext7Days] = useState([]);
   const [timeList, setTimeList] = useState([]);
 
   const [selectedDate, setSelectedDate] = useState();
   const [selectedTime, setSelectedTime] = useState();
   const [contactNumber, setContactNumber] = useState('');
+  const [notes, setNotes] = useState();
 
   useEffect(() => {
     getDays();
@@ -66,6 +69,40 @@ export default function BookingSection() {
   
   const rows = Math.ceil(timeList.length / 4);
 
+  const bookAppointment=()=>{
+    const data={
+      data:{
+        Username:'raj1',
+        Date:selectedDate,
+        Time:selectedTime,
+        Email:userData.email,
+        hospitals:hospital.id,
+        Note:notes
+      }
+    }
+
+    const { Date, Email, Time } = data.data;
+    const [startTime, endTime] = Time.split(' : ');
+    const dateParts = Date.split('-');
+    const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+
+    const date_time = `${formattedDate} ${startTime}:00`;
+    const time_interval = `${startTime}-${endTime}`;
+    const outputData = {
+        email: Email,
+        date_time: date_time,
+        time_interval: time_interval,
+        location: "Ahmedabad"
+    };
+    
+    const jsonData = JSON.stringify(outputData);
+    console.log("outputData", jsonData); 
+
+    Api.createAppointment(jsonData).then(resp=>{
+      console.log(resp)
+    })
+  }
+
   return (
     <View>
       <Text style={{ fontSize: 12, color: Colors.GRAY }}>Book Appointment</Text>
@@ -113,6 +150,7 @@ export default function BookingSection() {
         <SubHeading subHeadingTitle={'Note'} seeAll={false} />
         <TextInput
           numberOfLines={3}
+          onChangeText={(value)=>setNotes(value)}
           style={{
             backgroundColor:Colors.LIGHT_GRAY,
             padding:10,
@@ -126,7 +164,7 @@ export default function BookingSection() {
       </View>
       <View>
         <TouchableOpacity
-            onPress={() => console.log("Make Appointment")}
+            onPress={() => bookAppointment()}
             style={{
               marginTop: 10,
               bottom: 0,

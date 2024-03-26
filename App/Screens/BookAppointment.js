@@ -18,7 +18,7 @@ export default function BookAppointment() {
   return (
     <View style={{padding:20}}>
       <AppointmentHospitalInfo hospital={param}/>
-      <BookingSection/>
+      <BookingSection hospital={param.hospital} />
     </View>
   )
 }

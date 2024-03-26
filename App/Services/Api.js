@@ -1,17 +1,26 @@
-const BASE_URL = "http://127.0.0.1:8000/api/"
-const API_KEY = ""
-const AxiosInstance=axios.create({
-    baseURL:BASE_URL,
-    headers:{
-        'Authorization':"Bearer " + API_KEY
-    }
-})
+import axios from 'axios';
 
+const BASE_URL = "http://10.0.0.2:8000/api/";
+const API_KEY = "123";
+const headers = API_KEY ? { 
+  'Authorization': `Bearer ${API_KEY}`,
+  'Content-Type': 'application/json' // Added Content-Type header
+} : {};
 
-const getUser=()=>axios.post(BASE_URL + 'user/', data)
-.then(response => {
-  console.log(response.data);
+const AxiosInstance = axios.create({
+    baseURL: BASE_URL,
+    headers: headers
+});
+
+const createAppointment = (inputData) => AxiosInstance.post("appointment/", inputData).then(response => {
+  console.log("Appointment created:", response.data);
+  return response.data;
 })
 .catch(error => {
-  console.error("Error sending data: ", error);
+  console.error("Error creating appointment: ", error);
+  throw error;
 });
+
+export default {
+    createAppointment
+};

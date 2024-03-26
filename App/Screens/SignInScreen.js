@@ -1,6 +1,4 @@
 import { Button, SafeAreaView, Text, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import app from '../../assets/images/app/app.jpg';
 import Colors from '../../assets/Shared/Color';
 import { Dimensions, Image, StyleSheet, View } from 'react-native';

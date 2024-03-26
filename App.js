@@ -2,9 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import NavigationRoute from "./App/Screens/NavigationRoute" 
 import { useFonts } from "expo-font";
-
 import { ActivityIndicator, Dimensions, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import * as Google from "expo-auth-session/providers/google";
 import {
   GoogleAuthProvider,
@@ -34,11 +32,9 @@ export default function App() {
       setLoading(true);
       const userJSON = await AsyncStorage.getItem('@user', (error, result) => {
         if(error) console.error('Something went wrong!');
-        else if(result) console.log('Getting key was successfull', result);
         else if(result === null) console.log('Key does not exists!');
       });
       const userData = userJSON ? JSON.parse(userJSON) : null;
-      console.log("userData", userData)
       setUserInfo(userData);
     } catch (e) {
       console.log(e, "Error getting local user");
@@ -60,10 +56,7 @@ export default function App() {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
         await AsyncStorage.setItem("@user", JSON.stringify(user));
-        console.log(JSON.stringify(user, null, 2));
         setUserInfo(user);
-      } else {
-        console.log("user not authenticated");
       }
     });
     return () => unsub();
@@ -75,5 +68,5 @@ export default function App() {
         <ActivityIndicator size={"large"} />
       </View>
     );
-  return userInfo ? <NavigationRoute /> : <SignInScreen promptAsync={promptAsync} />;
+  return userInfo ? <NavigationRoute/> : <SignInScreen promptAsync={promptAsync} />;
 }
