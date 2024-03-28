@@ -12,6 +12,7 @@ import {
 import { auth } from "./firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignInScreen from './App/Screens/SignInScreen';
+import { getLocalUser } from './App/Context/UserContext';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -21,27 +22,15 @@ export default function App() {
     'appfont-light': require('./assets/fonts/Outfit-Light.ttf')
   });
 
-  const [userInfo, setUserInfo]= React.useState();
-  const [loading, setLoading] = React.useState(false);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:'882530390257-uclmg9pj7rv68ma8ici4k7dk276b0lc2.apps.googleusercontent.com'
   })
 
-  const getLocalUser = async () => {
-    try {
-      setLoading(true);
-      const userJSON = await AsyncStorage.getItem('@user', (error, result) => {
-        if(error) console.error('Something went wrong!');
-        else if(result === null) console.log('Key does not exists!');
-      });
-      const userData = userJSON ? JSON.parse(userJSON) : null;
-      setUserInfo(userData);
-    } catch (e) {
-      console.log(e, "Error getting local user");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [loading, setLoading] = React.useState(false);
+  const [userInfo, setUserInfo]= React.useState();
+  React.useEffect(() => {
+    getLocalUser({ setLoading, setUserInfo });
+  }, []);
 
   React.useEffect(() => {
     if (response?.type == "success"){
@@ -52,7 +41,6 @@ export default function App() {
   }, [response])
 
   React.useEffect(() => {
-    getLocalUser();
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
         await AsyncStorage.setItem("@user", JSON.stringify(user));
@@ -61,7 +49,7 @@ export default function App() {
     });
     return () => unsub();
   }, []);
-  
+
   if (loading)
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>

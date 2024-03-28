@@ -5,9 +5,17 @@ import SubHeading from '../Home/SubHeading';
 import moment from 'moment';
 import { FlatList } from 'react-native-gesture-handler';
 import Api from '../../Services/Api';
+import { getLocalUser } from '../../Context/UserContext';
+
 
 
 export default function BookingSection({hospital}) {
+  const [loading, setLoading] = React.useState(false);
+  const [userInfo, setUserInfo]= React.useState();
+  React.useEffect(() => {
+    getLocalUser({ setLoading, setUserInfo });
+  }, []);
+
   const [next7Days, setNext7Days] = useState([]);
   const [timeList, setTimeList] = useState([]);
 
@@ -75,7 +83,7 @@ export default function BookingSection({hospital}) {
         Username:'raj1',
         Date:selectedDate,
         Time:selectedTime,
-        Email:userData.email,
+        Email:userInfo.email,
         hospitals:hospital.id,
         Note:notes
       }
@@ -96,8 +104,6 @@ export default function BookingSection({hospital}) {
     };
     
     const jsonData = JSON.stringify(outputData);
-    console.log("outputData", jsonData); 
-
     Api.createAppointment(jsonData).then(resp=>{
       console.log(resp)
     })
