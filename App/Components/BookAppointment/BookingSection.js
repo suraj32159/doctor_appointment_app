@@ -84,12 +84,14 @@ export default function BookingSection({hospital}) {
         Date:selectedDate,
         Time:selectedTime,
         Email:userInfo.email,
+        Name:userInfo.displayName,
         hospitals:hospital.id,
-        Note:notes
+        Note:notes,
+        contactNumber:contactNumber
       }
     }
 
-    const { Date, Email, Time } = data.data;
+    const { Date, Email, Time, contactNumber, Note } = data.data;
     const [startTime, endTime] = Time.split(' : ');
     const dateParts = Date.split('-');
     const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
@@ -100,7 +102,10 @@ export default function BookingSection({hospital}) {
         email: Email,
         date_time: date_time,
         time_interval: time_interval,
-        location: "Ahmedabad"
+        location: "Ahmedabad",
+        name : userInfo.displayName,
+        contact_number: contactNumber,
+        description: Note
     };
     
     const jsonData = JSON.stringify(outputData);
