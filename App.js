@@ -1,8 +1,7 @@
-import React from "react";
-import { View } from "react-native";
-import NavigationRoute from "./App/Screens/NavigationRoute" 
+import React, { useEffect, useState } from "react";
+import { View, ActivityIndicator } from "react-native";
+import NavigationRoute from "./App/Screens/NavigationRoute";
 import { useFonts } from "expo-font";
-import { ActivityIndicator, Dimensions, Image, TouchableOpacity } from 'react-native';
 import * as Google from "expo-auth-session/providers/google";
 import {
   GoogleAuthProvider,
@@ -12,7 +11,7 @@ import {
 import { auth } from "./firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignInScreen from './App/Screens/SignInScreen';
-import { getLocalUser } from './App/Context/UserContext';
+import Api from "./App/Services/Api";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -23,38 +22,78 @@ export default function App() {
   });
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId:'882530390257-uclmg9pj7rv68ma8ici4k7dk276b0lc2.apps.googleusercontent.com'
-  })
+    androidClientId: '882530390257-uclmg9pj7rv68ma8ici4k7dk276b0lc2.apps.googleusercontent.com'
+  });
 
-  const [loading, setLoading] = React.useState(false);
-  const [userInfo, setUserInfo]= React.useState();
-  React.useEffect(() => {
-    getLocalUser({ setLoading, setUserInfo });
+  const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState(null);
+
+  const registerUser = async (user) => {
+    try {
+      const fullName = user.displayName.split(" ");
+      const firstName = fullName[0];
+      const lastName = fullName.slice(1).join(" ");
+
+      const userData = {
+        username: user.email.split('@')[0],
+        email: user.email,
+        first_name: firstName,
+        last_name: lastName,
+      };
+
+      await Api.registerUser(userData);
+    } catch (error) {
+      console.error("Failed to register user:", error);
+    }
+  };
+
+  const checkLocalUser = async () => {
+    try {
+      const userJSON = await AsyncStorage.getItem("@user");
+      const userData = userJSON ? JSON.parse(userJSON) : null;
+      console.log("Local storage user: ", userData);
+      setUserInfo(userData);
+    } catch (e) {
+      console.error(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLocalUser();
   }, []);
 
-  React.useEffect(() => {
-    if (response?.type == "success"){
+  useEffect(() => {
+    if (response?.type === "success") {
       const { id_token } = response.params;
       const credentials = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(auth, credentials)
+      signInWithCredential(auth, credentials).catch((error) => {
+        console.error("Failed to sign in with Google credentials:", error);
+      });
     }
-  }, [response])
+  }, [response]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
         await AsyncStorage.setItem("@user", JSON.stringify(user));
+        await registerUser(user);
         setUserInfo(user);
+      } else {
+        setUserInfo(null);
       }
     });
     return () => unsub();
   }, []);
 
-  if (loading)
+  if (!fontsLoaded || loading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <ActivityIndicator size={"large"} />
+        <ActivityIndicator size="large" />
       </View>
     );
-  return userInfo ? <NavigationRoute/> : <SignInScreen promptAsync={promptAsync} />;
+  }
+
+  return userInfo ? <NavigationRoute /> : <SignInScreen promptAsync={promptAsync} />;
 }

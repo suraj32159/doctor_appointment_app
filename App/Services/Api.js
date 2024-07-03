@@ -1,26 +1,42 @@
 import axios from 'axios';
-const BASE_URL = "http://127.0.0.1:8000/api/";
-const headers = { 
+
+const BASE_URL = "https://2ade-120-72-93-91.ngrok-free.app/api/";
+const headers = {
   'Content-Type': 'application/json'
 };
 
 const createAppointment = async (inputData) => {
-  const config = {
-    headers: headers
-  };
-
-  console.log("Request data:", `${BASE_URL}appointment/`, inputData, config);
-
   try {
-    const response = await axios.post(`${BASE_URL}appointment/`, inputData, config);
-    console.log("Appointment created:", response.data);
+    console.log("request : ", inputData)
+    const response = await axios.post(`${BASE_URL}appointment/`, inputData, { headers });
+  } catch (error) {
+    console.error('API error:', error);
+  }
+};
+
+const registerUser = async (inputData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}user/`, inputData, { headers });
+  } catch (error) {
+    console.error('API error:', error);
+  }
+};
+
+const getAppointment = async (email) => {
+  try {
+    let url = `${BASE_URL}appointment/`;
+    if (email) {
+      url += email.email;
+    }
+    const response = await axios.get(url, { headers });
     return response.data;
   } catch (error) {
-    console.error("Error creating appointment:", error);
-    throw error;
+    console.error('API error:', error);
   }
-}
+};
 
 export default {
-  createAppointment
+  getAppointment,
+  createAppointment,
+  registerUser
 };

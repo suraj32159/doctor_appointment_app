@@ -4,16 +4,16 @@ import Colors from '../../../assets/Shared/Color';
 
 
 export default function HospitalDoctorTab({activeTab}) {
-    const [activeIndex,setActiveIndex]=useState(0)
+    const [activeIndex,setActiveIndex]=useState(1) // make it 0 to revrt changes
   return (
     <View style={{marginTop:10}}>
         <View style={{display: 'flex', flexDirection:'row', alignItems:'center', justifyContent: 'space-around'}}>
-            <TouchableOpacity style={[activeIndex==0?styles.activeTab:styles.inActiveTab]} onPress={()=>{setActiveIndex(0); activeTab('Hospital')}}>
+            {/* <TouchableOpacity style={[activeIndex==0?styles.activeTab:styles.inActiveTab]} onPress={()=>{setActiveIndex(0); activeTab('Hospital')}}>
                 <Text style={[
                     activeIndex==0?
                     styles.activeText:styles.inActiveText
                 ]}>Hospital</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity style={[activeIndex==1?styles.activeTab:styles.inActiveTab]} onPress={()=>{setActiveIndex(1); activeTab('Doctor')}}>
                 <Text style={[
                     activeIndex==1?

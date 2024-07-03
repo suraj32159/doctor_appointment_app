@@ -20,7 +20,8 @@ export default function Header() {
     <View style={{display: 'flex', flexDirection:'row', gap:7, alignItems:'center', justifyContent:'space-between'}}>
         <View style={{display: 'flex', flexDirection:'row', gap:7, alignItems:'center'}}>
             <View style={{padding:5, marginTop:0}}>
-                <Image source={patient} style={{width: 35, height: 35, borderRadius: 99}} />
+                {/* <Image source={patient} style={{width: 35, height: 35, borderRadius: 99}} /> */}
+                <Image source={{ uri: userInfo.photoURL }} style={{width: 35, height: 35, borderRadius: 99}} />
             </View>
             <View>
                 <Text style={{fontSize:10}}>Hello,</Text>

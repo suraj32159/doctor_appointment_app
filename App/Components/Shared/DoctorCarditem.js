@@ -4,8 +4,11 @@ import Colors from '../../../assets/Shared/Color';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function DoctorCardItem({ doctor }) {
+    const navigation = useNavigation();
     return (
         <View style={{ borderRadius: 20, marginBottom: 20, backgroundColor: 'white' }}>
             <View style={{ flexDirection: 'row' }}>
@@ -33,7 +36,10 @@ export default function DoctorCardItem({ doctor }) {
                     </View>
                 </View>
             </View>
-            <TouchableOpacity style={{ width: '100%', backgroundColor: Colors.LIGHT_PRIMARY, padding: 5, marginTop:10, borderRadius: 5 }}>
+            <TouchableOpacity onPress={() => navigation.navigate('book-appointment', {
+                    hospital:doctor})
+                }
+            style={{ width: '100%', backgroundColor: Colors.LIGHT_PRIMARY, padding: 5, marginTop:10, borderRadius: 5 }}>
                 <Text style={{ color: 'white', textAlign: 'center' }}>Make Appointment</Text>
             </TouchableOpacity>
         </View>

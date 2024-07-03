@@ -55,7 +55,7 @@ export default function HospitalDoctorsListScreen() {
 const doctorList = [
   {
       id: 1,
-      name: 'Dr. Megha Rajput',
+      name: 'Dr. Sam Curran',
       description: 'Obstetrician/Gynecologist ',
       imageUrl: require('../../assets/images/doctor/doctor4.jpg'),
       category:{'name':'Dentist'}
@@ -67,7 +67,8 @@ const doctorList = [
     <View style={{padding:30}}>
       <PageHeader title={param?.categoryName}/>
       <HospitalDoctorTab activeTab={(value)=>setActiveTab(value)}/>
-      {!hospitalList?.length?<ActivityIndicator size={'large'} color={Colors.PRIMARY} /> : activeTab=='Hospital'?<HospitalListBig hospitalList={hospitalList}/>:<DoctorListBig doctorList={doctorList}/>}
+      {!hospitalList?.length?<ActivityIndicator size={'large'} color={Colors.PRIMARY} /> : <DoctorListBig doctorList={doctorList}/>}
+      {/* {!hospitalList?.length?<ActivityIndicator size={'large'} color={Colors.PRIMARY} /> : activeTab=='Hospital'?<HospitalListBig hospitalList={hospitalList}/>:<DoctorListBig doctorList={doctorList}/>} */}
     </View>
   )
 }

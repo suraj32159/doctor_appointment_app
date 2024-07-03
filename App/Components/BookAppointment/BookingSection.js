@@ -1,5 +1,6 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Colors from '../../../assets/Shared/Color';
 import SubHeading from '../Home/SubHeading';
 import moment from 'moment';
@@ -7,36 +8,45 @@ import { FlatList } from 'react-native-gesture-handler';
 import Api from '../../Services/Api';
 import { getLocalUser } from '../../Context/UserContext';
 
-
-
-export default function BookingSection({hospital}) {
-  const [loading, setLoading] = React.useState(false);
-  const [userInfo, setUserInfo]= React.useState();
-  React.useEffect(() => {
-    getLocalUser({ setLoading, setUserInfo });
-  }, []);
-
+export default function BookingSection({ hospital }) {
+  const [appointmentList, setAppointmentList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   const [next7Days, setNext7Days] = useState([]);
   const [timeList, setTimeList] = useState([]);
-
-  const [selectedDate, setSelectedDate] = useState();
-  const [selectedTime, setSelectedTime] = useState();
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
   const [contactNumber, setContactNumber] = useState('');
-  const [notes, setNotes] = useState();
+  const [notes, setNotes] = useState('');
+
+  const navigation = useNavigation();
 
   useEffect(() => {
+    getLocalUser({ setLoading, setUserInfo });
     getDays();
     getTime();
+    fetchAppointments(); // Fetch appointments initially
   }, []);
+
+  const fetchAppointments = async () => {
+    try {
+      const response = await Api.getAppointment();
+      setAppointmentList(response);
+    } catch (error) {
+      console.error('API error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getTime = () => {
     const timeList = [];
     for (let i = 12; i < 18; i++) {
       timeList.push({
-        time: `${i}:00 : ${i}:30`,
+        time: `${i}:00-${i}:30`,
       });
       timeList.push({
-        time: `${i}:30 : ${i + 1}:00`,
+        time: `${i}:30-${i + 1}:00`,
       });
     }
     setTimeList(timeList);
@@ -61,57 +71,90 @@ export default function BookingSection({hospital}) {
       onPress={() => setSelectedDate(item.date)}
       style={[styles.dayButton, selectedDate === item.date ? { backgroundColor: Colors.PRIMARY } : null]}
     >
-      <Text style={[{ fontStyle: 'normal', fontSize:10 }, selectedDate === item.date ? { color: Colors.white } : null]}>{item.day}</Text>
+      <Text style={[{ fontStyle: 'normal', fontSize: 10 }, selectedDate === item.date ? { color: Colors.white } : null]}>{item.day}</Text>
       <Text style={[{ fontSize: 10, fontWeight: 'bold' }, selectedDate === item.date ? { color: Colors.white } : null]}>{item.formattedDate}</Text>
     </TouchableOpacity>
   );
 
-  const renderTimeButton = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => setSelectedTime(item.time)}
-      style={[styles.dayButton, selectedTime === item.time ? { backgroundColor: Colors.PRIMARY } : null]}
-    >
-      <Text style={[{ fontStyle: 'normal', fontSize:10 }, selectedTime === item.time ? { color: Colors.white } : null]}>{item.time}</Text>
-    </TouchableOpacity>
-  );
-  
-  const rows = Math.ceil(timeList.length / 4);
+  const renderTimeButton = ({ item }) => {
+    // Filter out times that are already booked
+    const isBooked = appointmentList.some(appointment => {
+      const appointmentDate = moment(appointment.date_time).format('YYYY-MM-DD');
+      const appointmentTime = appointment.time_interval.replace(/\s/g, '');
+      return appointmentDate === selectedDate && item.time === appointmentTime;
+    });
 
-  const bookAppointment=()=>{
-    const data={
-      data:{
-        Username:'raj1',
-        Date:selectedDate,
-        Time:selectedTime,
-        Email:userInfo.email,
-        Name:userInfo.displayName,
-        hospitals:hospital.id,
-        Note:notes,
-        contactNumber:contactNumber
-      }
+    if (isBooked) {
+      return null; // Do not render booked times
     }
 
-    const { Date, Email, Time, contactNumber, Note } = data.data;
-    const [startTime, endTime] = Time.split(' : ');
+    return (
+      <TouchableOpacity
+        onPress={() => setSelectedTime(item.time)}
+        style={[styles.dayButton, selectedTime === item.time ? { backgroundColor: Colors.PRIMARY } : null]}
+      >
+        <Text style={[{ fontStyle: 'normal', fontSize: 10 }, selectedTime === item.time ? { color: Colors.white } : null]}>{item.time}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const rows = Math.ceil(timeList.length / 4);
+
+  const bookAppointment = () => {
+    console.log('Selected Date:', selectedDate);
+    console.log('Selected Time:', selectedTime);
+    console.log('Contact Number:', contactNumber);
+    console.log('notes:', notes);
+
+    if (!contactNumber) {
+      alert('Please enter a contact number');
+      return;
+    }
+
+    const data = {
+      data: {
+        Username: userInfo.email.split('@')[0],
+        Date: selectedDate,
+        Time: selectedTime,
+        Email: userInfo.email,
+        Name: userInfo.displayName,
+        hospitals: hospital.id,
+        Note: notes,
+        contact_Number: contactNumber,
+      },
+    };
+
+    console.log('Data to send:', data);
+
+    const { Date, Email, Time, contact_Number, Note } = data.data;
+    const [startTime, endTime] = Time.split('-');
     const dateParts = Date.split('-');
     const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
 
     const date_time = `${formattedDate} ${startTime}:00`;
     const time_interval = `${startTime}-${endTime}`;
     const outputData = {
-        email: Email,
-        date_time: date_time,
-        time_interval: time_interval,
-        location: "Ahmedabad",
-        name : userInfo.displayName,
-        contact_number: contactNumber,
-        description: Note
+      email: Email,
+      date_time: date_time,
+      time_interval: time_interval,
+      location: "Ahmedabad",
+      name: userInfo.displayName,
+      contact_number: contact_Number,
+      description: Note,
     };
-    
     const jsonData = JSON.stringify(outputData);
-    Api.createAppointment(jsonData).then(resp=>{
-      console.log(resp)
-    })
+    Api.createAppointment(jsonData).then(resp => {
+      Alert.alert(
+        'Success',
+        'Your appointment has been booked successfully.',
+        [
+          { text: 'OK', onPress: () => navigation.navigate('Home') }
+        ]
+      );
+    }).catch(error => {
+      console.error('API Error:', error);
+      Alert.alert('Error', 'Failed to book the appointment. Please try again.');
+    });
   }
 
   return (
@@ -145,48 +188,47 @@ export default function BookingSection({hospital}) {
         <SubHeading subHeadingTitle={'Contact Number'} seeAll={false} />
         <TextInput
           style={{
-            backgroundColor:Colors.LIGHT_GRAY,
-            padding:10,
-            borderRadius:10,
-            borderColor:Colors.SECONDARY,
-            borderWidth:1,
+            backgroundColor: Colors.LIGHT_GRAY,
+            padding: 10,
+            borderRadius: 10,
+            borderColor: Colors.SECONDARY,
+            borderWidth: 1,
           }}
           placeholder='Enter Contact Number'
           keyboardType='phone-pad'
-          onChangeText={text => setContactNumber(text)}
-          value={contactNumber}
+          onChangeText={value => setContactNumber(value)}
         />
       </View>
       <View>
         <SubHeading subHeadingTitle={'Note'} seeAll={false} />
         <TextInput
           numberOfLines={3}
-          onChangeText={(value)=>setNotes(value)}
+          onChangeText={(value) => setNotes(value)}
           style={{
-            backgroundColor:Colors.LIGHT_GRAY,
-            padding:10,
-            borderRadius:10,
-            borderColor:Colors.SECONDARY,
-            borderWidth:1,
-            textAlignVertical:'top'
+            backgroundColor: Colors.LIGHT_GRAY,
+            padding: 10,
+            borderRadius: 10,
+            borderColor: Colors.SECONDARY,
+            borderWidth: 1,
+            textAlignVertical: 'top'
           }}
           placeholder='Write Notes Here'
         />
       </View>
       <View>
         <TouchableOpacity
-            onPress={() => bookAppointment()}
-            style={{
-              marginTop: 10,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: 13,
-              backgroundColor: Colors.PRIMARY,
-              borderRadius: 99
-            }}
+          onPress={bookAppointment}
+          style={{
+            marginTop: 10,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: 13,
+            backgroundColor: Colors.PRIMARY,
+            borderRadius: 99
+          }}
         >
-            <Text style={{ color: Colors.white, textAlign: 'center', fontSize: 12 }}>Make Appointment</Text>
+          <Text style={{ color: Colors.white, textAlign: 'center', fontSize: 12 }}>Make Appointment</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -195,8 +237,8 @@ export default function BookingSection({hospital}) {
 
 const styles = StyleSheet.create({
   daysContainer: {
-    flexDirection: 'row', // Changed to row to display items in a row
-    flexWrap: 'wrap', // Allow items to wrap to the next row if they exceed the container's width
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   dayButton: {
     marginTop: 5,
@@ -206,7 +248,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: 'center',
     marginRight: 10,
-    marginBottom: 5, // Added margin bottom for separation
+    marginBottom: 5,
     borderColor: Colors.PRIMARY,
   },
 });

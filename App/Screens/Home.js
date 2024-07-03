@@ -6,8 +6,6 @@ import Slider from '../Components/Home/Slider'
 import Categories from '../Components/Home/Categories'
 import PremiumHospitals from '../Components/Home/PremiumHospitals'
 import { ScrollView } from 'react-native-virtualized-view'
-// import { NavigationContainer } from '@react-navigation/native';
-// import TabNavigation from '../Navigations/TabNavigation';
 
 export default function Home() {
 
@@ -19,11 +17,5 @@ export default function Home() {
       <Categories/>
       <PremiumHospitals/>
     </ScrollView>
-    // <NavigationContainer>
-    //   <View>
-    //     <Text>Home</Text>
-    //   </View>
-    //   <TabNavigation/>
-    // </NavigationContainer>
   )
 }

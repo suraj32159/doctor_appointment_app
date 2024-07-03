@@ -1,44 +1,46 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
-import React from 'react'
-import Colors from '../../../assets/Shared/Color';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
-export default function AppointmentCardItem({ appointment }) {
+const AppointmentCardItem = ({ appointment }) => {
+  const {
+    date_time,
+    contact_number,
+    gmeet_link,
+    time_interval,
+    location,
+    description,
+    user_details,
+  } = appointment;
+
   return (
-    <View style={styles.container}>
-      <View style={styles.infoContainer}>
-        <Text style={styles.dateTimeText}>{appointment.date} - {appointment.time}</Text>
-        <Text style={styles.hospitalNameText}>{appointment.name}</Text>
-      </View>
-      <Image style={styles.image} source={appointment.imageUrl} />
+    <View style={styles.card}>
+      <Text style={styles.title}>Appointment: {new Date(date_time).toLocaleDateString()} {time_interval}</Text>
+      <Text>Date: {new Date(date_time).toLocaleDateString()}</Text>
+      <Text>Time: {time_interval}</Text>
+      <Text>Location: {location}</Text>
+      <Text>Description: {description}</Text>
+      {contact_number && <Text>Contact: {contact_number}</Text>}
+      {gmeet_link && <Text>Gmeet: {gmeet_link}</Text>}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop:10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: Colors.LIGHT_GRAY,
+  card: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginVertical: 10,
     borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 3 },
   },
-  infoContainer: {
-    flex: 1,
-    marginRight: 10,
-  },
-  dateTimeText: {
-    fontSize: 16,
+  title: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  hospitalNameText: {
-    fontSize: 14,
-  },
-  image: {
-    height: 100,
-    width: 100,
-    borderRadius: 10,
+    marginBottom: 10,
   },
 });
+
+export default AppointmentCardItem;

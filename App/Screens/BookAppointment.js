@@ -5,6 +5,7 @@ import { useRoute } from '@react-navigation/native'
 import ActionButton from '../Components/HospitalDetail/ActionButton';
 import HorizontalLine from '../Components/Shared/HorizontalLine';
 import BookingSection from '../Components/BookAppointment/BookingSection';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function BookAppointment() {
   const [hospital, setHospital] = useState(null);
@@ -16,7 +17,7 @@ export default function BookAppointment() {
       }
   }, [param]);
   return (
-    <View style={{padding:20}}>
+    <View style={{padding:20, flex:1}}>
       <AppointmentHospitalInfo hospital={param}/>
       <BookingSection hospital={param.hospital} />
     </View>
