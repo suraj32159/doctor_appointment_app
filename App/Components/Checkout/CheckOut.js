@@ -30,12 +30,7 @@ const Cart = () => {
   const createOrder = () => {
     return new Promise((resolve, reject) => {
       fetch('https://sandbox.cashfree.com/pg/orders', {
-        headers: {
-          'X-Client-Secret': 'cfsk_ma_test_b837b40d155a36bec59067de9fb73a5d_a1fe529c',
-          'X-Client-Id': 'TEST10262846753b1c21cc9fcc5fe95b64826201',
-          'Content-Type': 'application/json',
-          'x-api-version': '2023-08-01',
-        },
+
         method: 'POST',
         body: JSON.stringify({
           order_amount: 500.1,
