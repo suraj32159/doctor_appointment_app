@@ -113,11 +113,11 @@ export default function BookingSection({ hospital }) {
 
     const data = {
       data: {
-        Username: userInfo.email.split('@')[0],
+        Username: userInfo && userInfo.email ? userInfo.email.split('@')[0] : 'suraj.fero@gmail.com',
         Date: selectedDate,
         Time: selectedTime,
-        Email: userInfo.email,
-        Name: userInfo.displayName,
+        Email: userInfo && userInfo.email ? userInfo.email : 'suraj.fero@gmail.com',
+        Name : userInfo && userInfo.displayName ? userInfo.displayName : 'Suraj Singh',
         hospitals: hospital.id,
         Note: notes,
         contact_Number: contactNumber,
@@ -138,23 +138,19 @@ export default function BookingSection({ hospital }) {
       date_time: date_time,
       time_interval: time_interval,
       location: "Ahmedabad",
-      name: userInfo.displayName,
+      name: 'Suraj Singh',
       contact_number: contact_Number,
       description: Note,
     };
     const jsonData = JSON.stringify(outputData);
-    Api.createAppointment(jsonData).then(resp => {
-      Alert.alert(
-        'Success',
-        'Your appointment has been booked successfully.',
-        [
-          { text: 'OK', onPress: () => navigation.navigate('Home') }
-        ]
-      );
-    }).catch(error => {
-      console.error('API Error:', error);
-      Alert.alert('Error', 'Failed to book the appointment. Please try again.');
-    });
+    Api.createAppointment(jsonData)
+      .then(resp => {
+        navigation.navigate('CheckoutScreen');
+      })
+      .catch(error => {
+        console.error('API Error:', error);
+        Alert.alert('Error', 'Failed to book the appointment. Please try again.');
+      });
   }
 
   return (
